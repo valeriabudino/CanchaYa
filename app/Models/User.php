@@ -21,7 +21,9 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'telefono',
         'password',
+        'rol',
     ];
 
     /**
@@ -39,11 +41,20 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
+    public const ROL_USER = 'user';
+    public const ROL_ADMIN = 'admin';
+
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'rol' => 'string',
         ];
+    }
+
+    public function esAdmin(): bool
+    {
+        return $this->rol === self::ROL_ADMIN;
     }
 }
