@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Models\Club;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Volt\Volt;
@@ -82,5 +83,48 @@ class AuthenticationTest extends TestCase
             ->assertRedirect('/');
 
         $this->assertGuest();
+    }
+
+    public function test_admin_club_redirects_to_panel_after_login(): void
+    {
+        $club = Club::factory()->create();
+        $user = User::factory()->create([
+            'rol' => User::ROL_ADMIN_CLUB,
+            'club_id' => $club->id,
+        ]);
+
+        $component = Volt::test('pages.auth.login')
+            ->set('form.email', $user->email)
+            ->set('form.password', 'password');
+
+        $component->call('login');
+
+        $component
+            ->assertHasNoErrors()
+            ->assertRedirect(route('admin.panel', absolute: false));
+
+        $this->assertAuthenticated();
+    }
+
+    public function test_regular_user_cannot_access_admin_panel(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get('/admin/panel');
+
+        $response->assertForbidden();
+    }
+
+    public function test_admin_club_can_access_admin_panel(): void
+    {
+        $club = Club::factory()->create();
+        $user = User::factory()->create([
+            'rol' => User::ROL_ADMIN_CLUB,
+            'club_id' => $club->id,
+        ]);
+
+        $response = $this->actingAs($user)->get('/admin/panel');
+
+        $response->assertOk();
     }
 }
