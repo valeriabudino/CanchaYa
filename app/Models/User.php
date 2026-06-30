@@ -70,4 +70,12 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Club::class);
     }
+
+    public function getHomeRoute(): string
+    {
+        return match ($this->rol) {
+            self::ROL_ADMIN_CLUB => route('admin.panel', absolute: false),
+            default => route('dashboard', absolute: false),
+        };
+    }
 }
