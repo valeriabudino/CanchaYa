@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -24,6 +25,7 @@ class User extends Authenticatable
         'telefono',
         'password',
         'rol',
+        'club_id',
     ];
 
     /**
@@ -43,6 +45,7 @@ class User extends Authenticatable
      */
     public const ROL_USER = 'user';
     public const ROL_ADMIN = 'admin';
+    public const ROL_ADMIN_CLUB = 'admin_club';
 
     protected function casts(): array
     {
@@ -56,5 +59,15 @@ class User extends Authenticatable
     public function esAdmin(): bool
     {
         return $this->rol === self::ROL_ADMIN;
+    }
+
+    public function esAdminClub(): bool
+    {
+        return $this->rol === self::ROL_ADMIN_CLUB;
+    }
+
+    public function club(): BelongsTo
+    {
+        return $this->belongsTo(Club::class);
     }
 }
