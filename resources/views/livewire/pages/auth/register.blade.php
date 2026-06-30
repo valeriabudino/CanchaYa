@@ -12,6 +12,7 @@ new #[Layout('layouts.guest')] class extends Component
 {
     public string $name = '';
     public string $email = '';
+    public string $telefono = '';
     public string $password = '';
     public string $password_confirmation = '';
 
@@ -23,6 +24,7 @@ new #[Layout('layouts.guest')] class extends Component
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'telefono' => ['nullable', 'string', 'regex:/^\+549\d{6,14}$/'],
             'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -50,6 +52,13 @@ new #[Layout('layouts.guest')] class extends Component
             <x-input-label for="email" :value="__('Email')" />
             <x-text-input wire:model="email" id="email" class="block mt-1 w-full" type="email" name="email" required autocomplete="username" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        </div>
+
+        <!-- Teléfono / WhatsApp -->
+        <div class="mt-4">
+            <x-input-label for="telefono" :value="__('Teléfono (WhatsApp)')" />
+            <x-text-input wire:model="telefono" id="telefono" class="block mt-1 w-full" type="text" name="telefono" placeholder="+5491112345678" autocomplete="tel" />
+            <x-input-error :messages="$errors->get('telefono')" class="mt-2" />
         </div>
 
         <!-- Password -->
